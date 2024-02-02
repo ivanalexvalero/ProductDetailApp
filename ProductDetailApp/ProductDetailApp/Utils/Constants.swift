@@ -13,8 +13,9 @@ import Foundation
 
 
 struct Constants {
-//    Title View
+//    Titlew
     static let firstViewTitle = "Product Detail App"
+    static let searchPlaceHolder = "Busca tus productos..."
     
 //    button titles
     static let startButtonTitle = "Empezar"
