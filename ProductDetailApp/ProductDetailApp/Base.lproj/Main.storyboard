@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="0og-oO-Lyq">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -138,21 +138,36 @@
             </objects>
             <point key="canvasLocation" x="133.58778625954199" y="2.1126760563380285"/>
         </scene>
-        <!--View Controller-->
+        <!--Home View View Controller-->
         <scene sceneID="2kx-A9-ox1">
             <objects>
-                <viewController id="Vlz-FN-Kf2" sceneMemberID="viewController">
+                <viewController id="Vlz-FN-Kf2" customClass="HomeViewViewController" customModule="ProductDetailApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="AEs-ug-ZOh">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Xbg-8u-nDT">
+                                <rect key="frame" x="0.0" y="103" width="393" height="749"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="q9R-Lf-STe"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Xbg-8u-nDT" firstAttribute="top" secondItem="q9R-Lf-STe" secondAttribute="top" id="Olo-Yv-h5b"/>
+                            <constraint firstAttribute="bottom" secondItem="Xbg-8u-nDT" secondAttribute="bottom" id="Smo-nL-Fif"/>
+                            <constraint firstItem="Xbg-8u-nDT" firstAttribute="trailing" secondItem="q9R-Lf-STe" secondAttribute="trailing" id="UMm-qn-dbU"/>
+                            <constraint firstItem="Xbg-8u-nDT" firstAttribute="leading" secondItem="q9R-Lf-STe" secondAttribute="leading" id="kOt-9c-1eC"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="CnN-dj-NjE"/>
+                    <connections>
+                        <outlet property="productTableView" destination="Xbg-8u-nDT" id="Y95-CZ-HUu"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="h00-vl-Pbu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1946" y="4"/>
+            <point key="canvasLocation" x="1945.8015267175572" y="3.5211267605633805"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="uDh-V0-HsA">
@@ -162,6 +177,9 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="bK6-L1-04Z">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" red="0.070588235289999995" green="0.070588235289999995" blue="0.070588235289999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
