@@ -14,16 +14,21 @@ import Foundation
 
 struct Constants {
 //    Titlew
-    static let firstViewTitle = "Product Detail App"
+    static let firstViewTitle = "Product Detail"
     static let searchPlaceHolder = "Busca tus productos..."
     
 //    button titles
     static let startButtonTitle = "Empezar"
     static let nextButtonTitle = "Siguiente"
+    static let searchScopeButtonTitles = ["Todos", "Motorola", "Xiaomi", "Iphone", "Samsung"]
+    static let allScopeButtonTitle = "Todos"
     
-//    Colors
-    static let darkBlue = "DarkBlue"
-    static let purple = "Purple"
+    //    Colors
+    struct Colors {
+        static let darkBlue = "DarkBlue"
+        static let purple = "Purple"
+        static let gray = "Gray"
+    }
     
 //    Slide constants
     static let firstSlideTitle = "Navega por la app"

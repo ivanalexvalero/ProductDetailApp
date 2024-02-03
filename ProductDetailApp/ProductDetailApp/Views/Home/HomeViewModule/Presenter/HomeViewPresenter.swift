@@ -16,4 +16,11 @@ class HomeViewPresenter: HomeViewPresenterProtocol {
     var interactor: HomeViewInteractorProtocol?
     var router: HomeViewRouterProtocol?
 
+    func fetch() {
+        interactor?.fetch()
+    }
+    
+    func getProduct(product: [Products.Result]) {
+        view?.updateTableView(products: product)
+    }
 }

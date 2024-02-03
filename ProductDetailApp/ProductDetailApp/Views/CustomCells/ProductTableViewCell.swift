@@ -26,5 +26,9 @@ class ProductTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
     }
-    
+    func setupCell(model: Products.Result) {
+        self.productTitleLabel.text = model.title
+        self.productCategoryLabel.text = model.attributes.first?.valueName
+        self.productImageView.image = UIImage(named: Constants.firstSlideImage)
+    }
 }

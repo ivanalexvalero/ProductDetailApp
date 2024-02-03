@@ -15,8 +15,8 @@ class HomeViewViewController: UIViewController, HomeViewViewProtocol {
     var presenter: HomeViewPresenterProtocol?
 
     @IBOutlet weak var productTableView: UITableView!
-    let products = Product.getAllProducts()
-    var filteredProducts = [Product]()
+    var products = [Products.Result]()
+    var filteredProducts = [Products.Result]()
     
     lazy var searchController: UISearchController = {
        let search = UISearchController(searchResultsController: nil)
@@ -28,7 +28,7 @@ class HomeViewViewController: UIViewController, HomeViewViewProtocol {
         search.searchBar.sizeToFit()
         search.searchBar.searchBarStyle = .prominent
         
-        search.searchBar.scopeButtonTitles = ["Todos", "Auto", "Hogar", "Alimentos"]
+        search.searchBar.scopeButtonTitles = Constants.searchScopeButtonTitles
         search.searchBar.delegate = self
         
         return search
@@ -36,15 +36,14 @@ class HomeViewViewController: UIViewController, HomeViewViewProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setup()
         configTableView()
         filteredProducts = products
-        
-        
+        presenter?.fetch()
         navigationItem.searchController = searchController
         
-        self.view.backgroundColor = UIColor(named: "Gray")
-        self.title = "Product Detail"
+        self.view.backgroundColor = UIColor(named: Constants.Colors.gray)
+        self.title = Constants.firstViewTitle
     }
     
     func configTableView() {
@@ -59,15 +58,16 @@ class HomeViewViewController: UIViewController, HomeViewViewProtocol {
         productTableView.dataSource = self
     }
     
-    func filterContentForSearchText(searchText: String, scope: String = "Todos") {
+    func filterContentForSearchText(searchText: String, scope: String = Constants.allScopeButtonTitle) {
         searchController.searchBar.showsScopeBar = searchController.isActive ? true : false
-        filteredProducts = products.filter({ (product: Product) -> Bool in
-            let matchText = (scope == "Todos") || (product.type == scope)
+        
+        filteredProducts = products.filter({ product in
+            let isMatchScope = (scope == Constants.allScopeButtonTitle) || (product.attributes.first?.valueName == scope)
             
             if isSearchBarEmpty() {
-                return matchText
+                return isMatchScope
             } else {
-                return matchText && product.title.lowercased().contains(searchText.lowercased())
+                return isMatchScope && product.title.lowercased().contains(searchText.lowercased())
             }
         })
         
@@ -82,20 +82,39 @@ class HomeViewViewController: UIViewController, HomeViewViewProtocol {
         let searchBarScopeisFeltering = searchController.searchBar.selectedScopeButtonIndex != 0
         return searchController.isActive && (!isSearchBarEmpty() || searchBarScopeisFeltering   )
     }
+    
+    private func setup() {
+        let viewController = self
+        let interactor = HomeViewInteractor()
+        let presenter = HomeViewPresenter()
+        let router = HomeViewRouter()
+     
+        presenter.interactor = interactor
+        presenter.router = router
+        presenter.view = viewController
+
+        interactor.presenter = presenter
+        viewController.presenter = presenter
+        router.presenter = presenter
+        router.viewController = viewController
+    }
+    
+    func updateTableView(products: [Products.Result]) {
+        self.products = products
+        productTableView.reloadData()
+    }
 }
 
 extension HomeViewViewController: UISearchBarDelegate {
-//    search bar UIView
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         guard let searchText = searchBar.text,
               let scope = searchBar.scopeButtonTitles?[selectedScope] else { return }
-        
+
         filterContentForSearchText(searchText: searchText, scope: scope)
     }
 }
 
 extension HomeViewViewController: UISearchResultsUpdating {
-//    update UIView results
     func updateSearchResults(for searchController: UISearchController) {
         let searchBar = searchController.searchBar
         guard let searchBarText = searchBar.text,
@@ -103,30 +122,30 @@ extension HomeViewViewController: UISearchResultsUpdating {
         
         filterContentForSearchText(searchText: searchBarText, scope: scope)
     }
-    
-    
 }
 
 extension HomeViewViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isFiltering() { return filteredProducts.count }
-        return products.count
+        if isFiltering() {
+            return filteredProducts.count
+            
+        } else {
+            return products.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "\(ProductTableViewCell.self)", for: indexPath) as? ProductTableViewCell else { return UITableViewCell() }
         
-        let currentProduct: Product
+        let currentProduct: Products.Result
         
         if isFiltering() {
             currentProduct = filteredProducts[indexPath.row]
         } else {
             currentProduct = products[indexPath.row]
         }
-        
-        cell.productTitleLabel.text = currentProduct.title
-        cell.productCategoryLabel.text = currentProduct.type
-        cell.productImageView.image = currentProduct.image
+
+        cell.setupCell(model: currentProduct)
         
         return cell
         
