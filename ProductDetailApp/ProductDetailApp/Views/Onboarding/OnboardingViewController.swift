@@ -23,10 +23,10 @@ class OnboardingViewController: UIViewController {
             pageControl.currentPage = currentPage
             if currentPage == slides.count - 1 {
                 nextButton.setTitle(Constants.startButtonTitle, for: .normal)
-                nextButton.backgroundColor = UIColor(named: Constants.darkBlue)
+                nextButton.backgroundColor = UIColor(named: Constants.Colors.darkBlue)
             } else {
                 nextButton.setTitle(Constants.nextButtonTitle, for: .normal)
-                nextButton.backgroundColor = UIColor(named: Constants.purple)
+                nextButton.backgroundColor = UIColor(named: Constants.Colors.purple)
             }
         }
     }
@@ -66,8 +66,6 @@ class OnboardingViewController: UIViewController {
         if currentPage == slides.count - 1 {
             let controller = storyboard?.instantiateViewController(withIdentifier: Constants.homeNavigationController) as! UINavigationController
             controller.modalPresentationStyle = .fullScreen
-//            controller.modalTransitionStyle = .crossDissolve
-            controller.title = Constants.firstViewTitle
             present(controller, animated: true)
         } else {
             currentPage += 1
