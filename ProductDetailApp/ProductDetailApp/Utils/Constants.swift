@@ -43,4 +43,7 @@ struct Constants {
     
 //    ViewController
     static let homeNavigationController = "homeNavigationController"
+    
+//    Other
+    static let noAvailableLabel = "No disponible"
 }
