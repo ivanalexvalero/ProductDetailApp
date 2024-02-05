@@ -15,6 +15,7 @@ import Foundation
 protocol HomeViewViewProtocol {
     var presenter: HomeViewPresenterProtocol? { get set }
     func updateTableView(products: [Products.Result])
+    func showError(_ error: connectionError)
 }
 
 protocol HomeViewPresenterProtocol {
@@ -24,6 +25,7 @@ protocol HomeViewPresenterProtocol {
     
     func fetch()
     func getProduct(product: [Products.Result])
+    func showError(_ error: connectionError)
 }
 
 protocol HomeViewInteractorProtocol {

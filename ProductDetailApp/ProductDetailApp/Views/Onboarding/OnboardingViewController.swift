@@ -86,21 +86,6 @@ extension OnboardingViewController: UICollectionViewDelegate, UICollectionViewDa
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let isLandscape = UIDevice.current.orientation.isLandscape
-
-//        if isLandscape {
-            // Ajustar el margen superior para landscape y definir el tamaño de la celda
-//            let cellWidth: CGFloat = 400.0  // Ajusta según tus necesidades
-//            let cellHeight: CGFloat = 200.0  // Ajusta según tus necesidades
-//
-//            return CGSize(width: cellWidth, height: cellHeight)
-//        } else {
-            // Otro tamaño para otras orientaciones (por ejemplo, portrait)
-            return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
-//        }
-    }
-    
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let width = scrollView.frame.width
         currentPage = Int(scrollView.contentOffset.x / width)

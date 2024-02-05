@@ -12,6 +12,7 @@
 import Foundation
 
 class HomeViewPresenter: HomeViewPresenterProtocol {
+    
     var view: HomeViewViewProtocol?
     var interactor: HomeViewInteractorProtocol?
     var router: HomeViewRouterProtocol?
@@ -22,5 +23,9 @@ class HomeViewPresenter: HomeViewPresenterProtocol {
     
     func getProduct(product: [Products.Result]) {
         view?.updateTableView(products: product)
+    }
+    
+    func showError(_ error: connectionError) {
+        view?.showError(error)
     }
 }
