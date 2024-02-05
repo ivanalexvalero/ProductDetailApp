@@ -189,7 +189,6 @@ struct Products: Decodable {
         let valueID, valueName: String?
         let attributeGroupID: AttributeGroupID
         let attributeGroupName: AttributeGroupName
-        let valueStruct: Struct?
         let values: [AttributeValue]
         let source: Int
         let valueType: ValueType
@@ -200,7 +199,6 @@ struct Products: Decodable {
             case valueName = "value_name"
             case attributeGroupID = "attribute_group_id"
             case attributeGroupName = "attribute_group_name"
-            case valueStruct = "value_struct"
             case values, source
             case valueType = "value_type"
         }
@@ -243,13 +241,14 @@ struct Products: Decodable {
     // MARK: - Struct
     struct Struct: Decodable {
         let number: Double
-        let unit: Unit
+        
+        enum CodingKeys: String, CodingKey {
+            case number
+
+        }
     }
 
-    enum Unit: String, Decodable {
-        case cm = "cm"
-        case g = "g"
-    }
+
 
     enum ValueType: String, Decodable {
         case list = "list"

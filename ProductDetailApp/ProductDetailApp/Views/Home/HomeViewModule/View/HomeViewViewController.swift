@@ -18,6 +18,7 @@ class HomeViewViewController: UIViewController, HomeViewViewProtocol {
     var products = [Products.Result]()
     var filteredProducts = [Products.Result]()
     
+//  Search Bar
     lazy var searchController: UISearchController = {
        let search = UISearchController(searchResultsController: nil)
         search.searchResultsUpdater = self
@@ -44,8 +45,9 @@ class HomeViewViewController: UIViewController, HomeViewViewProtocol {
         
         self.view.backgroundColor = UIColor(named: Constants.Colors.gray)
         self.title = Constants.firstViewTitle
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
     }
-    
+
     func configTableView() {
         let nibProductCell = UINib(nibName: "\(ProductTableViewCell.self)", bundle: nil)
         productTableView.register(nibProductCell, forCellReuseIdentifier: "\(ProductTableViewCell.self)")
@@ -56,22 +58,6 @@ class HomeViewViewController: UIViewController, HomeViewViewProtocol {
         
         productTableView.delegate = self
         productTableView.dataSource = self
-    }
-    
-    func filterContentForSearchText(searchText: String, scope: String = Constants.allScopeButtonTitle) {
-        searchController.searchBar.showsScopeBar = searchController.isActive ? true : false
-        
-        filteredProducts = products.filter({ product in
-            let isMatchScope = (scope == Constants.allScopeButtonTitle) || (product.attributes.first?.valueName == scope)
-            
-            if isSearchBarEmpty() {
-                return isMatchScope
-            } else {
-                return isMatchScope && product.title.lowercased().contains(searchText.lowercased())
-            }
-        })
-        
-        productTableView.reloadData()
     }
     
     private func isSearchBarEmpty() -> Bool {
@@ -103,6 +89,17 @@ class HomeViewViewController: UIViewController, HomeViewViewProtocol {
         self.products = products
         productTableView.reloadData()
     }
+    
+    func showError(_ error: connectionError) {
+        switch error {
+        case .failureResponse:
+            showErrorAlert(title: Constants.failureTitle, message: Constants.failureMessage, ctaTitle: Constants.understood)
+        case .requestFail:
+            showErrorAlert(title: Constants.requestTitle, message: Constants.requestMessage, ctaTitle: Constants.acpet)
+        case .errorData, .errorDecodingJson, .error:
+            showErrorAlert(title: Constants.errorTitle, message: Constants.errorMessage, ctaTitle: Constants.retry)
+        }
+    }
 }
 
 extension HomeViewViewController: UISearchBarDelegate {
@@ -126,28 +123,71 @@ extension HomeViewViewController: UISearchResultsUpdating {
 
 extension HomeViewViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isFiltering() {
-            return filteredProducts.count
-            
-        } else {
-            return products.count
-        }
+        return isFiltering() ? filteredProducts.count : products.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "\(ProductTableViewCell.self)", for: indexPath) as? ProductTableViewCell else { return UITableViewCell() }
         
+        let bgColorView = UIView()
+        bgColorView.backgroundColor = UIColor.clear
+        cell.selectedBackgroundView = bgColorView
+        
         let currentProduct: Products.Result
         
-        if isFiltering() {
-            currentProduct = filteredProducts[indexPath.row]
-        } else {
-            currentProduct = products[indexPath.row]
-        }
-
+        currentProduct = isFiltering() ? filteredProducts[indexPath.row] : products[indexPath.row]
+    
         cell.setupCell(model: currentProduct)
         
         return cell
-        
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let vc = ProductDetailViewController()
+
+        let selectedProduct: Products.Result
+        if isFiltering() {
+            selectedProduct = filteredProducts[indexPath.row]
+        } else {
+            selectedProduct = products[indexPath.row]
+        }
+
+        vc.selectedProduct = selectedProduct
+        navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+extension HomeViewViewController {
+//  Filter to searchBar
+    func filterContentForSearchText(searchText: String, scope: String = Constants.allScopeButtonTitle) {
+        searchController.searchBar.showsScopeBar = searchController.isActive ? true : false
+        
+        filteredProducts = products.filter({ product in
+            let isMatchScope = (scope == Constants.allScopeButtonTitle) || (product.attributes.first?.valueName == scope)
+            
+            if isSearchBarEmpty() {
+                return isMatchScope
+            } else {
+                return isMatchScope && product.title.lowercased().contains(searchText.lowercased())
+            }
+        })
+        
+        productTableView.reloadData()
+    }
+    
+//  Present error alert
+    func showErrorAlert(title:String, message: String, ctaTitle: String) {
+        DispatchQueue.main.async {
+              let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+            let okAction = UIAlertAction(title: ctaTitle, style: .default) { action in
+                if action.style == .default {
+                    self.presenter?.fetch()
+                }
+            }
+              alertController.addAction(okAction)
+
+            self.present(alertController, animated: true, completion: nil)
+          }
+      }
 }
