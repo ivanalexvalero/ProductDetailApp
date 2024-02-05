@@ -24,6 +24,7 @@ class ProductTableViewCell: UITableViewCell {
         super.awakeFromNib()
         
         setupSkeleton()
+        rotation()
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -33,7 +34,7 @@ class ProductTableViewCell: UITableViewCell {
     func setupCell(model: Products.Result) {
         self.showSkeleton()
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0){
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0){
             self.hideSkeleton()
 
             self.productTitleLabel.text = model.title
@@ -67,5 +68,13 @@ class ProductTableViewCell: UITableViewCell {
         self.productCategoryLabel.hideSkeleton()
         self.productPriceLabel.hideSkeleton()
         self.productImageView.hideSkeleton()
+    }
+    
+    func rotation() {
+        if UIDevice.current.orientation.isLandscape {
+            self.productImageView.contentMode = .scaleAspectFit
+        } else {
+            self.productImageView.contentMode = .scaleAspectFill
+        }
     }
 }

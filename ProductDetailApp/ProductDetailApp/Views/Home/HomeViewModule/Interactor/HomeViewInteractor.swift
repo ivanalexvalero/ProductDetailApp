@@ -11,6 +11,14 @@
 
 import Foundation
 
+enum connectionError {
+    case failureResponse
+    case requestFail
+    case errorData
+    case errorDecodingJson
+    case error
+}
+
 class HomeViewInteractor: HomeViewInteractorProtocol {
     var presenter: HomeViewPresenterProtocol?
     
@@ -19,34 +27,35 @@ class HomeViewInteractor: HomeViewInteractorProtocol {
 
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
+                self.presenter?.showError(.requestFail)
                 print("Error en la solicitud:", error)
                 return
             }
 
             guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+                self.presenter?.showError(.failureResponse)
                 print("Respuesta del servidor no exitosa")
                 return
             }
 
             guard let data = data else {
+                self.presenter?.showError(.errorData)
                 print("No se recibieron datos")
                 return
             }
 
             do {
                 let products = try JSONDecoder().decode(Products.self, from: data)
-                
-                // Accede directamente a la propiedad 'results'
                 let productList = products.results
-                
                 DispatchQueue.main.async {
                     self.presenter?.getProduct(product: productList)
-                    NotificationCenter.default.post(name: .modelUpdated, object: nil)
                 }
-            } catch {
-                print("Error decoding JSON:", error)
+            } catch let decodingError as DecodingError {
+                self.presenter?.showError(.errorDecodingJson)
+                print("Error decoding JSON:", decodingError)
+            } catch let error as NSError {
+                self.presenter?.showError(.error)
             }
-
         }.resume()
     }
 }
