@@ -16,9 +16,7 @@ class ProductDetailViewController: UIViewController {
     @IBOutlet weak var imageProductDetailImageView: UIImageView!
     @IBOutlet weak var titleProductDetailLabel: UILabel!
     @IBOutlet weak var priceProductDetailLabel: UILabel!
-    
     @IBOutlet weak var brandProductDetailLabel: UILabel!
-    
     @IBOutlet weak var storeNameProductDetailLabel: UILabel!
     
     var selectedProduct: Products.Result?
@@ -33,8 +31,8 @@ class ProductDetailViewController: UIViewController {
         if let selectedProduct = self.selectedProduct {
             self.titleProductDetailLabel.text = selectedProduct.title
             self.priceProductDetailLabel.text = selectedProduct.originalPrice != nil ? "$ \(selectedProduct.originalPrice!)" : Constants.noAvailableLabel
-            self.brandProductDetailLabel.text = selectedProduct.attributes.first?.valueName
-            self.storeNameProductDetailLabel.text = selectedProduct.officialStoreName
+            self.brandProductDetailLabel.text = "Marca: " + (selectedProduct.attributes.first?.valueName ?? Constants.noAvailableLabel)
+            self.storeNameProductDetailLabel.text = "Store: " + (selectedProduct.officialStoreName ?? Constants.noAvailableLabel)
             
             let image = selectedProduct.thumbnail
             guard let url = URL(string: image) else { return }

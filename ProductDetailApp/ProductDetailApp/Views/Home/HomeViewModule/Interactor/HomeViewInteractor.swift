@@ -21,9 +21,9 @@ enum connectionError {
 
 class HomeViewInteractor: HomeViewInteractorProtocol {
     var presenter: HomeViewPresenterProtocol?
-    
+
     func fetch() {
-        guard let url = URL(string: "https://api.mercadolibre.com/sites/MLA/search?category=MLA1055") else { return }
+        guard let url = constructURL() else { return }
 
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
@@ -58,4 +58,14 @@ class HomeViewInteractor: HomeViewInteractorProtocol {
             }
         }.resume()
     }
+    
+    func constructURL() -> URL? {
+        guard let url = URL(string: "https://api.mercadolibre.com/sites/MLA/search?category=MLA1055") else {
+            // Aquí puedes manejar el caso en el que la URL no se puede construir, por ejemplo, mostrando un error
+            return nil
+        }
+        
+        return url
+    }
 }
+

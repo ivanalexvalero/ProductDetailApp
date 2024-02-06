@@ -26,6 +26,13 @@ class HomeViewPresenter: HomeViewPresenterProtocol {
     }
     
     func showError(_ error: connectionError) {
-        view?.showError(error)
+        switch error {
+        case .failureResponse:
+            view?.showErrorAlert(title: Constants.failureTitle, message: Constants.failureMessage, ctaTitle: Constants.understood)
+        case .requestFail:
+            view?.showErrorAlert(title: Constants.requestTitle, message: Constants.requestMessage, ctaTitle: Constants.acpet)
+        case .errorData, .errorDecodingJson, .error:
+            view?.showErrorAlert(title: Constants.errorTitle, message: Constants.errorMessage, ctaTitle: Constants.retry)
+        }
     }
 }
