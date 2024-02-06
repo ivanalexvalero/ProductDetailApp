@@ -60,21 +60,12 @@ class HomeViewViewController: UIViewController, HomeViewViewProtocol {
         productTableView.dataSource = self
     }
     
-    private func isSearchBarEmpty() -> Bool {
-        return searchController.searchBar.text?.isEmpty ?? true
-    }
-    
-    func isFiltering() -> Bool {
-        let searchBarScopeisFeltering = searchController.searchBar.selectedScopeButtonIndex != 0
-        return searchController.isActive && (!isSearchBarEmpty() || searchBarScopeisFeltering   )
-    }
-    
     private func setup() {
         let viewController = self
         let interactor = HomeViewInteractor()
         let presenter = HomeViewPresenter()
         let router = HomeViewRouter()
-     
+
         presenter.interactor = interactor
         presenter.router = router
         presenter.view = viewController
@@ -86,18 +77,13 @@ class HomeViewViewController: UIViewController, HomeViewViewProtocol {
     }
     
     func updateTableView(products: [Products.Result]) {
-        self.products = products
-        productTableView.reloadData()
-    }
-    
-    func showError(_ error: connectionError) {
-        switch error {
-        case .failureResponse:
-            showErrorAlert(title: Constants.failureTitle, message: Constants.failureMessage, ctaTitle: Constants.understood)
-        case .requestFail:
-            showErrorAlert(title: Constants.requestTitle, message: Constants.requestMessage, ctaTitle: Constants.acpet)
-        case .errorData, .errorDecodingJson, .error:
-            showErrorAlert(title: Constants.errorTitle, message: Constants.errorMessage, ctaTitle: Constants.retry)
+        DispatchQueue.main.async{
+            self.products = products
+            guard !products.isEmpty else {
+                print("Empty products")
+                return
+            }
+            self.productTableView.reloadData()
         }
     }
 }
@@ -158,7 +144,16 @@ extension HomeViewViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension HomeViewViewController {
-//  Filter to searchBar
+    //  Filter to searchBar
+    private func isSearchBarEmpty() -> Bool {
+        return searchController.searchBar.text?.isEmpty ?? true
+    }
+    
+    func isFiltering() -> Bool {
+        let searchBarScopeisFeltering = searchController.searchBar.selectedScopeButtonIndex != 0
+        return searchController.isActive && (!isSearchBarEmpty() || searchBarScopeisFeltering   )
+    }
+
     func filterContentForSearchText(searchText: String, scope: String = Constants.allScopeButtonTitle) {
         searchController.searchBar.showsScopeBar = searchController.isActive ? true : false
         
@@ -176,18 +171,22 @@ extension HomeViewViewController {
     }
     
 //  Present error alert
-    func showErrorAlert(title:String, message: String, ctaTitle: String) {
+    func showErrorAlert(title: String, message: String, ctaTitle: String) {
+        presentErrorAlert(title: title, message: message, ctaTitle: ctaTitle) {
+            self.presenter?.fetch()
+        }
+    }
+
+    private func presentErrorAlert(title: String, message: String, ctaTitle: String, completion: (() -> Void)?) {
         DispatchQueue.main.async {
-              let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-            let okAction = UIAlertAction(title: ctaTitle, style: .default) { action in
-                if action.style == .default {
-                    self.presenter?.fetch()
-                }
+            let okAction = UIAlertAction(title: ctaTitle, style: .default) { _ in
+                completion?()
             }
-              alertController.addAction(okAction)
 
+            alertController.addAction(okAction)
             self.present(alertController, animated: true, completion: nil)
-          }
-      }
+        }
+    }
 }
