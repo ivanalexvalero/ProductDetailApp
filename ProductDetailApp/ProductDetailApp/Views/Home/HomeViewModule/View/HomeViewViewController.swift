@@ -157,10 +157,12 @@ extension HomeViewViewController {
     func filterContentForSearchText(searchText: String, scope: String = Constants.allScopeButtonTitle) {
         searchController.searchBar.showsScopeBar = searchController.isActive ? true : false
         
-        filteredProducts = products.filter({ product in
+        filteredProducts = products.filter({ [weak self] product in
+            guard let self = self else { return false }
+            
             let isMatchScope = (scope == Constants.allScopeButtonTitle) || (product.attributes.first?.valueName == scope)
             
-            if isSearchBarEmpty() {
+            if self.isSearchBarEmpty() {
                 return isMatchScope
             } else {
                 return isMatchScope && product.title.lowercased().contains(searchText.lowercased())
@@ -172,8 +174,8 @@ extension HomeViewViewController {
     
 //  Present error alert
     func showErrorAlert(title: String, message: String, ctaTitle: String) {
-        presentErrorAlert(title: title, message: message, ctaTitle: ctaTitle) {
-            self.presenter?.fetch()
+        presentErrorAlert(title: title, message: message, ctaTitle: ctaTitle) { [weak self] in
+            self?.presenter?.fetch()
         }
     }
 
