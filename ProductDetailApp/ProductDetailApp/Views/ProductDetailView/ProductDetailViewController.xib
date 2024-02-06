@@ -11,7 +11,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ProductDetailViewController" customModule="ProductDetailApp" customModuleProvider="target">
             <connections>
-                <outlet property="brandProductDetailLabel" destination="fYj-bO-oZW" id="8b9-bk-Y2G"/>
+                <outlet property="brandProductDetailLabel" destination="fYj-bO-oZW" id="s9t-tN-B98"/>
                 <outlet property="imageProductDetailImageView" destination="53F-qC-ggp" id="Mgo-YP-HBM"/>
                 <outlet property="priceProductDetailLabel" destination="KMG-7J-nge" id="g0v-lq-EA7"/>
                 <outlet property="storeNameProductDetailLabel" destination="hwg-95-Pgf" id="ORI-1Z-rMR"/>
